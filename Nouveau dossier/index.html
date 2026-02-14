@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legendary Love Game</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#ff1744,#ff8fa3);
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+/* خلفية قلوب مجنونة */
+.bg-heart{
+position:fixed;
+font-size:60px;
+animation:float 4s linear infinite;
+opacity:0.8;
+z-index:0;
+}
+
+@keyframes float{
+0%{transform:translateY(100vh);}
+100%{transform:translateY(-10vh);}
+}
+
+/* إطار الأسئلة الجديد */
+.container{
+background:white url("WhatsApp\ Image\ 2026-02-14\ at\ 18.49.35.jpeg") center/cover no-repeat;
+width:700px;
+height:500px;
+border-radius:30px;
+box-shadow:0 20px 50px rgba(0,0,0,0.4);
+padding:40px;
+text-align:center;
+position:relative;
+z-index:2;
+transition:0.2s;
+}
+
+/* تعديل لتوسيط الإطار */
+.container{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.shake{
+animation:shake 0.3s;
+}
+
+@keyframes shake{
+0%,100%{transform:translateX(0);}
+25%{transform:translateX(-10px);}
+75%{transform:translateX(10px);}
+}
+
+.question{
+font-size:40px;
+font-weight:bold;
+color:#ff1744;
+margin-top:40px;
+}
+
+.counter{
+font-size:24px;
+margin-top:10px;
+}
+
+button{
+font-size:28px;
+padding:18px 40px;
+border:none;
+border-radius:50px;
+cursor:pointer;
+margin:20px;
+transition:0.2s;
+}
+
+.yes{
+background:#ff1744;
+color:white;
+}
+
+.no{
+background:#444;
+color:white;
+position:relative;
+}
+
+.message{
+font-size:32px;
+margin-top:20px;
+color:#ff1744;
+opacity:0;
+transition:0.3s;
+}
+
+.message.show{opacity:1;}
+
+.countdown{
+font-size:100px;
+display:none;
+margin-top:20px;
+color:#ff1744;
+}
+
+.final{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(135deg,#ff1744,#ff758f);
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+color:white;
+font-size:60px;
+opacity:0;
+pointer-events:none;
+transition:0.6s;
+}
+
+.final.show{
+opacity:1;
+pointer-events:auto;
+}
+
+.name{
+font-size:70px;
+margin-top:20px;
+}
+
+.restart{
+margin-top:20px;
+font-size:24px;
+padding:10px 30px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+background:white;
+color:#ff1744;
+}
+</style>
+</head>
+
+<body>
+
+<div id="container" class="container">
+
+<div class="question" id="question">Do you love me? ❤️</div>
+<div class="counter" id="counter">Question 1 / 7</div>
+
+<button class="yes" id="yes">YES</button>
+<button class="no" id="no">NO</button>
+
+<div class="message" id="message"></div>
+<div class="countdown" id="countdown"></div>
+
+<div class="final" id="final">
+YOU ARE MY FOREVER 💍
+<div class="name" id="name"></div>
+<button class="restart" onclick="location.reload()">Restart</button>
+</div>
+
+</div>
+
+<script>
+const name = "imane ❤️😍";  // اسم المستخدم
+
+const questions=[
+"Do you love me? ❤️",
+"Will you stay forever? 💖",
+"Are we destiny? 💘",
+"Will you choose me always? 💞",
+"Am I your favorite? 💕",
+"Do you miss me? 💓",
+"Are we unstoppable? 💗"
+];
+
+let index=0;
+let yesScale=1;
+let noCount=0;  // عداد لزر "No"
+
+const q=document.getElementById("question");
+const counter=document.getElementById("counter");
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const message=document.getElementById("message");
+const countdown=document.getElementById("countdown");
+const final=document.getElementById("final");
+const nameBox=document.getElementById("name");
+const container=document.getElementById("container");
+
+/* خلفية قلوب */
+setInterval(()=>{
+let heart=document.createElement("div");
+heart.className="bg-heart";
+heart.innerHTML="❤️";
+heart.style.left=Math.random()*100+"%";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),4000);
+},300);
+
+function next(){
+index++;
+if(index>=questions.length){
+startCountdown();
+return;
+}
+q.textContent=questions[index];
+counter.textContent="Question "+(index+1)+" / 7";
+message.classList.remove("show");
+}
+
+yes.onclick=()=>{
+yesScale+=0.25;
+yes.style.transform="scale("+yesScale+")";
+
+playClickSound();
+
+message.textContent="That's what I like 😍";
+message.classList.add("show");
+
+setTimeout(next,1000);
+};
+
+no.onclick=()=>{
+noCount++;
+
+container.classList.add("shake"); // إضافة اهتزاز عند الضغط على "No"
+setTimeout(()=>container.classList.remove("shake"),300);
+
+no.style.position="absolute";
+no.style.left=Math.random()*650+"px";
+no.style.top=Math.random()*450+"px";
+
+// إذا تم الضغط على "No" 3 مرات، يظهر صورة
+if(noCount >= 3){
+showImageForThreeSeconds();
+noCount = 0;  // إعادة العداد بعد عرض الصورة
+}
+};
+
+function startCountdown(){
+yes.style.display="none";
+no.style.display="none";
+counter.style.display="none";
+message.style.display="none";
+
+let num=3;
+countdown.style.display="block";
+countdown.textContent=num;
+
+let int=setInterval(()=>{
+num--;
+if(num==0){
+clearInterval(int);
+countdown.style.display="none";
+showFinal();
+}
+countdown.textContent=num;
+},1000);
+}
+
+function showFinal(){
+final.classList.add("show");
+vibrate();
+playExplosion();
+
+typeName(name);
+fireworks();
+}
+
+function showImageForThreeSeconds(){
+let img = document.createElement("img");
+img.src = "www.jpeg";  // ضع رابط الصورة هنا
+img.style.position = "absolute";
+img.style.top = "50%";
+img.style.left = "50%";
+img.style.transform = "translate(-50%, -50%)";
+img.style.maxWidth = "200px";
+img.style.borderRadius = "10px";
+document.body.appendChild(img);
+
+setTimeout(() => {
+img.remove();
+}, 3000);  // الصورة ستختفي بعد 3 ثواني
+}
+
+function typeName(text){
+let i=0;
+let interval=setInterval(()=>{
+nameBox.textContent+=text[i];
+i++;
+if(i>=text.length) clearInterval(interval);
+},150);
+}
+
+function fireworks(){
+for(let i=0;i<40;i++){
+let fire=document.createElement("div");
+fire.innerHTML="🎆";
+fire.style.position="absolute";
+fire.style.fontSize="60px";
+fire.style.left=Math.random()*100+"%";
+fire.style.top=Math.random()*100+"%";
+document.body.appendChild(fire);
+setTimeout(()=>fire.remove(),1500);
+}
+}
+
+function vibrate(){
+if(navigator.vibrate){
+navigator.vibrate([200,100,200]);
+}
+}
+
+function playClickSound(){
+let audio=new Audio("https://www.soundjay.com/buttons/sounds/button-16.mp3");
+audio.play();
+}
+
+function playExplosion(){
+let audio=new Audio("https://www.soundjay.com/explosion/sounds/explosion-01.mp3");
+audio.play();
+}
+</script>
+
+</body>
+</html>
